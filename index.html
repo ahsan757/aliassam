@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis Risk Advisors</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:#0C0B0A;
+  --paper:#F7F4EF;
+  --blue:#800000;
+  --blue2:#9B1C1C;
+  --mid:#F0ECE5;
+  --muted:#8A8078;
+  --border:#0C0B0A;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Outfit',sans-serif;
+  font-weight:400;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+.cursor{
+  position:fixed;width:12px;height:12px;background:var(--blue);
+  border-radius:50%;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.2s,height 0.2s,background 0.2s;
+}
+.cursor-ring{
+  position:fixed;width:36px;height:36px;border:1.5px solid var(--blue);
+  border-radius:50%;pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.15s ease-out,width 0.2s,height 0.2s,opacity 0.2s;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 3rem;
+  background:var(--paper);
+  border-bottom:2px solid var(--border);
+}
+.logo{
+  font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;
+  letter-spacing:0.04em;color:var(--ink);text-decoration:none;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.logo-dot{
+  width:10px;height:10px;background:var(--blue);border-radius:50%;display:inline-block;
+}
+.nav-links{display:flex;gap:0.3rem;list-style:none;}
+.nav-links a{
+  font-size:0.8rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;cursor:none;
+  padding:0.45rem 1rem;border:2px solid transparent;
+  border-radius:40px;transition:all 0.2s;
+}
+.nav-links a:hover,.nav-links a.active{
+  color:var(--ink);border-color:var(--border);background:var(--paper);
+}
+.nav-links a.active{background:var(--ink);color:var(--paper);}
+
+.page{display:none;padding-top:70px;min-height:100vh;}
+.page.active{display:block;}
+
+/* ─── HOME ─── */
+.hero{
+  padding:3rem 3rem 0;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;border-bottom:2px solid var(--border);
+  min-height:calc(92vh - 70px);
+}
+.hero-left{
+  padding:3rem 3rem 3rem 0;
+  border-right:2px solid var(--border);
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  font-size:0.72rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:2rem;
+}
+.hero-tag::before{content:'';width:28px;height:2px;background:var(--blue);}
+.hero h1{
+  font-family:'Syne',sans-serif;font-size:clamp(3.5rem,6vw,5.5rem);
+  font-weight:800;line-height:1.02;letter-spacing:-0.02em;
+  margin-bottom:2.5rem;
+}
+.hero h1 .accent{color:var(--blue);}
+.hero-bottom{display:flex;flex-direction:column;gap:1.5rem;}
+.hero-desc{
+  font-size:1rem;color:var(--muted);line-height:1.8;
+  max-width:420px;font-weight:300;
+}
+.hero-ctas{display:flex;gap:0.8rem;flex-wrap:wrap;}
+.btn-fill{
+  font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.85rem 2rem;background:var(--ink);color:var(--paper);
+  border:2px solid var(--ink);border-radius:0;cursor:none;
+  transition:all 0.2s;
+}
+.btn-fill:hover{background:var(--blue);border-color:var(--blue);}
+.btn-outline{
+  font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.85rem 2rem;background:transparent;color:var(--ink);
+  border:2px solid var(--ink);cursor:none;transition:all 0.2s;
+}
+.btn-outline:hover{background:var(--ink);color:var(--paper);}
+
+.hero-right{
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:3rem 0 3rem 3rem;
+}
+.big-number{
+  font-family:'Syne',sans-serif;font-size:clamp(5rem,10vw,9rem);
+  font-weight:800;line-height:1;color:var(--mid);letter-spacing:-0.03em;
+}
+.stat-label{font-size:0.82rem;color:var(--muted);font-weight:400;margin-top:0.3rem;}
+.stat-block{margin-bottom:1.5rem;}
+.hero-right-bottom{border-top:2px solid var(--border);padding-top:1.5rem;}
+.market-note{
+  font-size:0.88rem;color:var(--muted);line-height:1.75;font-weight:300;
+}
+.market-note strong{color:var(--ink);font-weight:600;}
+
+/* WHO STRIP */
+.who-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-bottom:2px solid var(--border);
+}
+.who-item{
+  padding:2rem 1.8rem;
+  border-right:2px solid var(--border);
+  transition:background 0.25s;
+  position:relative;overflow:hidden;
+}
+.who-item:last-child{border-right:none;}
+.who-item::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:0;
+  background:var(--blue);transition:height 0.3s ease;z-index:0;
+}
+.who-item:hover::after{height:4px;}
+.who-item:hover{background:var(--mid);}
+.who-label{
+  font-size:0.65rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.8rem;
+}
+.who-item h4{
+  font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;
+  margin-bottom:0.5rem;line-height:1.2;
+}
+.who-item p{font-size:0.82rem;color:var(--muted);line-height:1.65;font-weight:300;}
+
+/* PROBLEM BLOCK */
+.problem-block{
+  display:grid;grid-template-columns:320px 1fr;
+  border-bottom:2px solid var(--border);
+}
+.problem-left{
+  padding:3rem;border-right:2px solid var(--border);
+  background:var(--ink);color:var(--paper);
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.problem-left h2{
+  font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;
+  line-height:1.1;letter-spacing:-0.02em;
+}
+.problem-left h2 span{color:var(--blue);}
+.problem-right{padding:3rem;}
+.problem-right p{
+  font-size:0.88rem;color:var(--muted);margin-bottom:1.5rem;font-weight:400;
+}
+.problem-pills{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:2rem;}
+.pill{
+  font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.4rem 1rem;border:2px solid var(--border);
+  transition:all 0.2s;cursor:none;
+}
+.pill:hover{background:var(--blue);border-color:var(--blue);color:var(--paper);}
+
+/* PRICE BLOCK */
+.price-band{padding:4rem 3rem;border-bottom:2px solid var(--border);}
+.section-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:3rem;
+}
+.section-head h2{
+  font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;
+  letter-spacing:-0.02em;
+}
+.section-head span{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid var(--border);}
+.price-card{
+  padding:2.5rem 2rem;border-right:2px solid var(--border);
+  transition:background 0.25s;
+  position:relative;
+}
+.price-card:last-child{border-right:none;}
+.price-card.featured{background:var(--ink);color:var(--paper);}
+.price-card:not(.featured):hover{background:var(--mid);}
+.tier-name{
+  font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.2rem;
+}
+.price-card.featured .tier-name{color:var(--blue);}
+.price-big{
+  font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
+  line-height:1;letter-spacing:-0.02em;margin-bottom:0.3rem;
+}
+.price-big sup{font-size:1rem;vertical-align:top;margin-top:0.6rem;display:inline-block;}
+.price-note{font-size:0.78rem;color:var(--muted);margin-bottom:2rem;font-weight:300;}
+.price-card.featured .price-note{color:#999;}
+.price-feature{
+  font-size:0.85rem;padding:0.7rem 0;
+  border-top:1px solid rgba(12,11,10,0.12);
+  display:flex;gap:0.8rem;align-items:flex-start;font-weight:300;
+}
+.price-card.featured .price-feature{border-top:1px solid rgba(247,244,239,0.1);color:rgba(247,244,239,0.8);}
+.price-feature::before{content:'→';color:var(--blue);flex-shrink:0;font-weight:600;}
+.hot-badge{
+  position:absolute;top:-1px;right:2rem;
+  background:var(--blue);color:var(--paper);
+  font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  padding:0.28rem 0.9rem;
+}
+
+/* ─── SERVICES ─── */
+.svc-hero{
+  padding:4rem 3rem 3rem;border-bottom:2px solid var(--border);
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;
+}
+.svc-hero h2{
+  font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;
+  letter-spacing:-0.02em;line-height:1.05;
+}
+.svc-hero h2 span{color:var(--blue);}
+.svc-hero p{font-size:0.95rem;color:var(--muted);line-height:1.8;font-weight:300;}
+
+/* BASIC SERVICES */
+.basic-head{
+  padding:2.5rem 3rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:2px solid var(--border);
+}
+.basic-head h3{
+  font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.basic-head .badge-blue{
+  font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  padding:0.35rem 1rem;background:var(--blue);color:var(--paper);
+}
+
+.svc-list{border-bottom:2px solid var(--border);}
+.svc-row{
+  display:grid;grid-template-columns:80px 1fr auto;
+  align-items:start;
+  padding:2.5rem 3rem;
+  border-bottom:2px solid var(--border);
+  transition:background 0.2s;
+  gap:2rem;
+}
+.svc-row:last-child{border-bottom:none;}
+.svc-row:hover{background:var(--mid);}
+.svc-row:hover .svc-arrow-icon{transform:translate(4px,-4px);}
+.svc-n{
+  font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;
+  color:var(--mid);line-height:1;letter-spacing:-0.03em;
+}
+.svc-row:hover .svc-n{color:var(--blue);}
+.svc-body h4{
+  font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;
+  letter-spacing:-0.01em;margin-bottom:0.7rem;line-height:1.15;
+}
+.svc-body p{font-size:0.88rem;color:var(--muted);line-height:1.8;font-weight:300;max-width:560px;}
+.svc-price-tag{
+  font-size:0.8rem;font-weight:600;padding:0.5rem 1.2rem;
+  border:2px solid var(--border);white-space:nowrap;align-self:flex-start;
+}
+.svc-arrow-icon{
+  font-size:1.1rem;color:var(--muted);
+  transition:transform 0.2s,color 0.2s;margin-top:0.2rem;
+}
+.svc-row:hover .svc-arrow-icon{color:var(--blue);}
+.svc-price-area{display:flex;flex-direction:column;align-items:flex-end;gap:0.8rem;}
+
+/* ADVANCED */
+.adv-section{border-bottom:2px solid var(--border);}
+.adv-head{
+  padding:2.5rem 3rem 1.5rem;
+  border-bottom:2px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.adv-head h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;}
+.adv-head span{font-size:0.72rem;color:var(--muted);font-weight:400;letter-spacing:0.06em;}
+.adv-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:none;}
+.adv-card{
+  padding:2rem 1.8rem;border-right:2px solid var(--border);
+  transition:background 0.2s;
+}
+.adv-card:last-child{border-right:none;}
+.adv-card:hover{background:var(--ink);color:var(--paper);}
+.adv-card:hover p{color:#999;}
+.adv-card:hover .adv-tag{border-color:rgba(255,255,255,0.15);color:#999;}
+.adv-icon-sq{
+  width:42px;height:42px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;margin-bottom:1.2rem;
+  transition:border-color 0.2s;
+}
+.adv-card:hover .adv-icon-sq{border-color:var(--blue);}
+.adv-card h4{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;line-height:1.2;}
+.adv-card p{font-size:0.82rem;color:var(--muted);line-height:1.65;font-weight:300;}
+.adv-tag{
+  display:inline-block;margin-top:1rem;
+  font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  padding:0.25rem 0.7rem;border:1.5px solid var(--border);color:var(--muted);
+}
+
+/* HOW IT WORKS */
+.how-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:2px solid var(--border);
+}
+.how-step{
+  padding:2.5rem 2rem;border-right:2px solid var(--border);
+  position:relative;
+}
+.how-step:last-child{border-right:none;}
+.how-num{
+  font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;
+  color:var(--mid);line-height:1;margin-bottom:1rem;
+  letter-spacing:-0.03em;
+}
+.how-step h5{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.5rem;}
+.how-step p{font-size:0.82rem;color:var(--muted);line-height:1.65;font-weight:300;}
+
+/* ─── CONTACT ─── */
+.contact-banner{
+  background:var(--ink);padding:4rem 3rem;
+  display:grid;grid-template-columns:1fr auto;
+  gap:3rem;align-items:center;
+  border-bottom:2px solid var(--border);
+}
+.contact-banner h2{
+  font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
+  color:var(--paper);letter-spacing:-0.02em;line-height:1.05;
+}
+.contact-banner h2 span{color:var(--blue);}
+.contact-banner p{color:#888;font-size:0.95rem;margin-top:0.8rem;font-weight:300;line-height:1.75;}
+.wa-big{
+  display:flex;flex-direction:column;align-items:center;gap:0.6rem;
+  padding:2rem 2.5rem;background:var(--blue);color:var(--paper);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;
+  letter-spacing:0.08em;text-transform:uppercase;cursor:none;
+  transition:opacity 0.2s;border:none;white-space:nowrap;
+}
+.wa-big:hover{opacity:0.88;}
+.wa-big .wa-num{font-size:1.4rem;letter-spacing:-0.01em;}
+
+.contact-main{
+  display:grid;grid-template-columns:380px 1fr;
+  border-bottom:2px solid var(--border);
+  min-height:60vh;
+}
+.contact-sidebar{
+  border-right:2px solid var(--border);
+  padding:3rem;
+}
+.contact-sidebar h3{
+  font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;
+  margin-bottom:2rem;letter-spacing:-0.01em;
+}
+.c-detail{padding:1.2rem 0;border-bottom:2px solid var(--border);}
+.c-detail:last-child{border-bottom:none;}
+.c-detail-lbl{
+  font-size:0.62rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.4rem;
+}
+.c-detail-val{font-size:0.95rem;font-weight:500;}
+.c-detail-sub{font-size:0.8rem;color:var(--muted);font-weight:300;margin-top:0.2rem;}
+
+.contact-form-area{padding:3rem;}
+.contact-form-area h3{
+  font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;
+  margin-bottom:0.4rem;letter-spacing:-0.01em;
+}
+.contact-form-area .form-sub{font-size:0.85rem;color:var(--muted);margin-bottom:2.5rem;font-weight:300;}
+
+.frow{margin-bottom:1.3rem;}
+.frow label{
+  display:block;font-size:0.65rem;font-weight:700;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:0.45rem;
+}
+.frow input,.frow select,.frow textarea{
+  width:100%;background:var(--paper);
+  border:2px solid var(--border);
+  color:var(--ink);font-family:'Outfit',sans-serif;
+  font-size:0.9rem;font-weight:400;
+  padding:0.78rem 1rem;outline:none;
+  transition:border-color 0.2s;appearance:none;border-radius:0;
+}
+.frow input:focus,.frow select:focus,.frow textarea:focus{border-color:var(--blue);}
+.frow textarea{resize:vertical;min-height:110px;}
+.frow select option{background:var(--paper);}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.f-submit{
+  width:100%;margin-top:0.4rem;
+  font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:800;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:1.1rem;background:var(--blue);color:var(--paper);
+  border:2px solid var(--blue);cursor:none;
+  transition:all 0.2s;
+}
+.f-submit:hover{background:var(--ink);border-color:var(--ink);}
+
+/* FOOTER */
+footer{
+  padding:1.5rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:2px solid var(--border);
+  background:var(--ink);
+}
+.f-logo{
+  font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;
+  color:var(--paper);letter-spacing:0.03em;display:flex;align-items:center;gap:0.5rem;
+}
+.f-copy{font-size:0.72rem;color:#555;letter-spacing:0.06em;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.page.active .hero h1,
+.page.active .hero-desc,
+.page.active .hero-ctas{animation:fadeUp 0.55s ease both;}
+.page.active .hero-desc{animation-delay:0.08s;}
+.page.active .hero-ctas{animation-delay:0.16s;}
+
+@media(max-width:860px){
+  nav{padding:1rem 1.5rem;}
+  .hero,.problem-block,.contact-main,.contact-banner,.svc-hero{grid-template-columns:1fr;}
+  .hero-left{border-right:none;padding:2rem 0;}
+  .hero{padding:2rem 1.5rem 0;}
+  .who-strip,.adv-grid,.how-strip,.price-grid{grid-template-columns:1fr 1fr;}
+  .who-item,.adv-card,.how-step,.price-card{border-right:none;border-bottom:2px solid var(--border);}
+  .problem-left,.contact-sidebar{border-right:none;border-bottom:2px solid var(--border);}
+  .svc-row{grid-template-columns:60px 1fr;gap:1rem;}
+  .svc-price-area{display:none;}
+  .price-band,.svc-hero,.basic-head,.adv-head,.contact-banner,.contact-sidebar,.contact-form-area{padding:2rem 1.5rem;}
+  .svc-row{padding:2rem 1.5rem;}
+  .contact-banner{grid-template-columns:1fr;gap:1.5rem;}
+  .section-head{flex-direction:column;gap:0.5rem;}
+  .fgrid{grid-template-columns:1fr;}
+  footer{flex-direction:column;gap:0.4rem;padding:1.2rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<nav>
+  <a class="logo" href="#" onclick="showPage('home');return false;">
+    <span class="logo-dot"></span>Aegis Risk Advisors
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('services')" id="nav-services">Services</a></li>
+    <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HOME ══ -->
+<div class="page active" id="page-home">
+
+  <section class="hero">
+    <div class="hero-left">
+      <div>
+        <div class="hero-tag">Pakistan's Risk Advisory</div>
+        <h1>Know<br>your risk.<br><span class="accent">Plan first.</span></h1>
+      </div>
+      <div class="hero-bottom">
+        <p class="hero-desc">Aegis simplifies financial and operational risk for small businesses, freelancers, and individuals in Pakistan — with affordable, practical advice that actually makes sense.</p>
+        <div class="hero-ctas">
+          <button class="btn-fill" onclick="showPage('services')">View Services</button>
+          <button class="btn-outline" onclick="showPage('contact')">Book a Call</button>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div>
+        <div class="stat-block">
+          <div class="big-number">Rs.<br>2K</div>
+          <div class="stat-label">Starting price — no big-firm fees</div>
+        </div>
+        <div class="stat-block">
+          <div class="big-number">4</div>
+          <div class="stat-label">Core services, built for Pakistan</div>
+        </div>
+      </div>
+      <div class="hero-right-bottom">
+        <p class="market-note">Most people in Pakistan only act <strong>after</strong> a financial loss. Aegis helps you plan <strong>before</strong> it happens — for the cost of a dinner out.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO WE SERVE -->
+  <div class="who-strip">
+    <div class="who-item">
+      <div class="who-label">01 — Segment</div>
+      <h4>Small Businesses & Shops</h4>
+      <p>Local businesses and startups that face operational risk with zero advisory support.</p>
+    </div>
+    <div class="who-item">
+      <div class="who-label">02 — Segment</div>
+      <h4>Freelancers</h4>
+      <p>Pakistan's growing gig economy — managing income gaps, savings risk, and insurance needs.</p>
+    </div>
+    <div class="who-item">
+      <div class="who-label">03 — Segment</div>
+      <h4>Middle-Class Families</h4>
+      <p>Households hit by inflation and currency risk, with no structured safety planning.</p>
+    </div>
+    <div class="who-item">
+      <div class="who-label">04 — Segment</div>
+      <h4>Students & Young Pros</h4>
+      <p>Building financial literacy before costly mistakes — the smartest time to start.</p>
+    </div>
+  </div>
+
+  <!-- PROBLEM BLOCK -->
+  <div class="problem-block">
+    <div class="problem-left">
+      <h2>The gap <span>no one</span> is filling.</h2>
+    </div>
+    <div class="problem-right">
+      <p>Most people in Pakistan don't understand risk — insurance, savings, business exposure — because no one has explained it in a practical, affordable way. Existing services (banks, insurance agents) push products, not protection.</p>
+      <p>Growing economic uncertainty — inflation, currency swings, global crises — makes this more urgent every year. The freelance economy is booming with zero safety nets. A single crisis can wipe out years of work.</p>
+      <p>Aegis was built to solve this. Structured risk thinking, personalized advice, accessible pricing.</p>
+      <div class="problem-pills">
+        <span class="pill">Low risk awareness</span>
+        <span class="pill">No affordable advisory</span>
+        <span class="pill">React after losses</span>
+        <span class="pill">Growing uncertainty</span>
+        <span class="pill">Underserved market</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="price-band">
+    <div class="section-head">
+      <h2>Simple pricing.</h2>
+      <span>Transparent — No hidden fees</span>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="tier-name">Consultation</div>
+        <div class="price-big"><sup>Rs.</sup>2,000</div>
+        <div class="price-note">— Rs. 3,000 per session · 30–45 min</div>
+        <div class="price-feature">One-on-one risk review session</div>
+        <div class="price-feature">Identify your key exposures</div>
+        <div class="price-feature">Actionable next steps</div>
+        <div class="price-feature">WhatsApp, call, or in-person</div>
+      </div>
+      <div class="price-card featured">
+        <div class="hot-badge">Most Popular</div>
+        <div class="tier-name">Basic Plan</div>
+        <div class="price-big"><sup>Rs.</sup>3,000</div>
+        <div class="price-note">per month · subscription</div>
+        <div class="price-feature">Monthly check-ins & advice</div>
+        <div class="price-feature">Risk monitoring, ongoing</div>
+        <div class="price-feature">Insurance & savings guidance</div>
+        <div class="price-feature">Priority WhatsApp support</div>
+      </div>
+      <div class="price-card">
+        <div class="tier-name">Premium Plan</div>
+        <div class="price-big"><sup>Rs.</sup>8,000</div>
+        <div class="price-note">per month · full monitoring</div>
+        <div class="price-feature">Everything in Basic</div>
+        <div class="price-feature">Business risk audits included</div>
+        <div class="price-feature">Investment risk profiling</div>
+        <div class="price-feature">Fastest response, priority access</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="f-logo"><span class="logo-dot"></span>Aegis Risk Advisors</span>
+    <span class="f-copy">© 2025 Aegis Risk Advisors · Karachi, Pakistan</span>
+  </footer>
+</div>
+
+<!-- ══ SERVICES ══ -->
+<div class="page" id="page-services">
+
+  <div class="svc-hero">
+    <h2>Built for<br><span>real risk,</span><br>real people.</h2>
+    <p>A focused set of services designed specifically for the Pakistani market — affordable, practical, and delivered on your schedule. No jargon. No unnecessary complexity.</p>
+  </div>
+
+  <!-- BASIC -->
+  <div class="basic-head">
+    <h3>Basic Services</h3>
+    <div class="badge-blue">Core Offering</div>
+  </div>
+  <div class="svc-list">
+    <div class="svc-row">
+      <div class="svc-n">01</div>
+      <div class="svc-body">
+        <h4>Risk Assessment Reports</h4>
+        <p>A structured written analysis of the risks facing your business or personal finances — financial, operational, and reputational. You get a prioritized report with clear, actionable findings.</p>
+      </div>
+      <div class="svc-price-area">
+        <div class="svc-price-tag">Rs. 5,000 – 10,000</div>
+        <span class="svc-arrow-icon">↗</span>
+      </div>
+    </div>
+    <div class="svc-row">
+      <div class="svc-n">02</div>
+      <div class="svc-body">
+        <h4>Personal Financial Risk Planning</h4>
+        <p>We review your income, expenses, and savings to identify financial vulnerabilities — currency exposure, job loss risk, unexpected costs — and build a personal protection plan.</p>
+      </div>
+      <div class="svc-price-area">
+        <div class="svc-price-tag">Rs. 2,000 – 3,000</div>
+        <span class="svc-arrow-icon">↗</span>
+      </div>
+    </div>
+    <div class="svc-row">
+      <div class="svc-n">03</div>
+      <div class="svc-body">
+        <h4>Emergency Fund Planning</h4>
+        <p>Most people in Pakistan have no emergency fund. We calculate exactly how much you need, where to keep it, and how to build it — step by step — based on your real income and lifestyle.</p>
+      </div>
+      <div class="svc-price-area">
+        <div class="svc-price-tag">Included in Basic Plan</div>
+        <span class="svc-arrow-icon">↗</span>
+      </div>
+    </div>
+    <div class="svc-row">
+      <div class="svc-n">04</div>
+      <div class="svc-body">
+        <h4>Insurance Guidance</h4>
+        <p>We help you understand what coverage you actually need, compare available options in Pakistan, and avoid paying for products that don't match your real risk profile.</p>
+      </div>
+      <div class="svc-price-area">
+        <div class="svc-price-tag">Rs. 2,000 – 3,000</div>
+        <span class="svc-arrow-icon">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED -->
+  <div class="adv-section">
+    <div class="adv-head">
+      <h3>Advanced Services</h3>
+      <span>Available in Premium Plan or standalone</span>
+    </div>
+    <div class="adv-grid">
+      <div class="adv-card">
+        <div class="adv-icon-sq">🏢</div>
+        <h4>Business Risk Audits</h4>
+        <p>Deep-dive assessment of operational, financial, and legal risk exposures across your business.</p>
+        <div class="adv-tag">Rs. 10,000 – 25,000</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon-sq">📈</div>
+        <h4>Investment Risk Profiling</h4>
+        <p>Understand your risk tolerance and evaluate investment options against your actual situation.</p>
+        <div class="adv-tag">Premium Plan</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon-sq">🔐</div>
+        <h4>Fraud & Loss Prevention</h4>
+        <p>Identify vulnerabilities in your processes that expose you to financial fraud or operational loss.</p>
+        <div class="adv-tag">Premium Plan</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon-sq">🧮</div>
+        <h4>Digital Risk Tools</h4>
+        <p>AI-based risk calculators and digital assessment tools — currently in R&D, launching in Phase 2.</p>
+        <div class="adv-tag">Coming Soon</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-strip">
+    <div class="how-step">
+      <div class="how-num">01</div>
+      <h5>You reach out</h5>
+      <p>Contact us via WhatsApp, email, or this website — whichever is easiest for you.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">02</div>
+      <h5>We gather your data</h5>
+      <p>We collect your financial or business information securely and confidentially.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">03</div>
+      <h5>We analyze the risk</h5>
+      <p>Using structured advisory tools, we identify and prioritize your key risk exposures.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">04</div>
+      <h5>You get your report</h5>
+      <p>Clear report and personalized recommendations — delivered on your timeline.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span class="f-logo"><span class="logo-dot"></span>Aegis Risk Advisors</span>
+    <span class="f-copy">© 2025 Aegis Risk Advisors · Karachi, Pakistan</span>
+  </footer>
+</div>
+
+<!-- ══ CONTACT ══ -->
+<div class="page" id="page-contact">
+
+  <div class="contact-banner">
+    <div>
+      <h2>Let's talk about<br>your <span>risk.</span></h2>
+      <p>Every engagement starts with a conversation. Reach out via WhatsApp, email, or fill the form. We respond within one business day.</p>
+    </div>
+    <button class="wa-big">
+      💬 Chat on WhatsApp
+      <span class="wa-num">+92 300 000 0000</span>
+    </button>
+  </div>
+
+  <div class="contact-main">
+    <div class="contact-sidebar">
+      <h3>Contact Details</h3>
+      <div class="c-detail">
+        <div class="c-detail-lbl">WhatsApp (Preferred)</div>
+        <div class="c-detail-val">+92 300 000 0000</div>
+        <div class="c-detail-sub">Fastest response channel</div>
+      </div>
+      <div class="c-detail">
+        <div class="c-detail-lbl">Email</div>
+        <div class="c-detail-val">hello@aegisrisk.pk</div>
+        <div class="c-detail-sub">For formal enquiries</div>
+      </div>
+      <div class="c-detail">
+        <div class="c-detail-lbl">Based in</div>
+        <div class="c-detail-val">Karachi, Pakistan</div>
+        <div class="c-detail-sub">Serving clients nationwide remotely</div>
+      </div>
+      <div class="c-detail">
+        <div class="c-detail-lbl">Response time</div>
+        <div class="c-detail-val">Within 1 business day</div>
+        <div class="c-detail-sub">Often much sooner on WhatsApp</div>
+      </div>
+      <div class="c-detail">
+        <div class="c-detail-lbl">Starting price</div>
+        <div class="c-detail-val">Rs. 2,000 per session</div>
+        <div class="c-detail-sub">No commitment, no hidden fees</div>
+      </div>
+    </div>
+
+    <div class="contact-form-area">
+      <h3>Send an Enquiry</h3>
+      <p class="form-sub">Tell us about your situation and we'll recommend the right service for you.</p>
+      <div class="fgrid">
+        <div class="frow"><label>First name</label><input type="text" placeholder="Ali"></div>
+        <div class="frow"><label>Last name</label><input type="text" placeholder="Ahmed"></div>
+      </div>
+      <div class="frow"><label>WhatsApp / Phone</label><input type="tel" placeholder="+92 3XX XXXXXXX"></div>
+      <div class="frow"><label>Email</label><input type="email" placeholder="you@example.com"></div>
+      <div class="frow">
+        <label>I am a…</label>
+        <select>
+          <option value="" disabled selected>Select your profile</option>
+          <option>Small business owner</option>
+          <option>Freelancer</option>
+          <option>Middle-class individual / family</option>
+          <option>Student or young professional</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="frow">
+        <label>Service interested in</label>
+        <select>
+          <option value="" disabled selected>Choose a service</option>
+          <option>Risk Assessment Report (Rs. 5,000–10,000)</option>
+          <option>Personal Financial Risk Planning (Rs. 2,000–3,000)</option>
+          <option>Emergency Fund Planning</option>
+          <option>Insurance Guidance (Rs. 2,000–3,000)</option>
+          <option>Business Risk Audit (Rs. 10,000–25,000)</option>
+          <option>Basic Subscription — Rs. 3,000/month</option>
+          <option>Premium Subscription — Rs. 8,000/month</option>
+          <option>Not sure yet — need advice</option>
+        </select>
+      </div>
+      <div class="frow"><label>Your situation</label><textarea placeholder="Briefly describe what you're worried about or what you'd like help with…"></textarea></div>
+      <button class="f-submit" id="fsub">Send Enquiry →</button>
+    </div>
+  </div>
+
+  <footer>
+    <span class="f-logo"><span class="logo-dot"></span>Aegis Risk Advisors</span>
+    <span class="f-copy">© 2025 Aegis Risk Advisors · Karachi, Pakistan</span>
+  </footer>
+</div>
+
+<script>
+  const cur=document.getElementById('cur'),ring=document.getElementById('ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+  animRing();
+  document.querySelectorAll('button,a,.pill,.who-item,.svc-row,.price-card,.adv-card,.how-step').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';ring.style.width='52px';ring.style.height='52px';ring.style.opacity='0.5';});
+    el.addEventListener('mouseleave',()=>{cur.style.width='12px';cur.style.height='12px';ring.style.width='36px';ring.style.height='36px';ring.style.opacity='1';});
+  });
+
+  function showPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+    document.getElementById('page-'+id).classList.add('active');
+    document.getElementById('nav-'+id).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  document.getElementById('fsub').addEventListener('click',function(){
+    this.textContent='Enquiry Sent ✓';
+    this.style.background='#0C0B0A';
+    this.style.borderColor='#0C0B0A';
+    setTimeout(()=>{this.textContent='Send Enquiry →';this.style.background='';this.style.borderColor='';},3000);
+  });
+</script>
+</body>
+</html>
